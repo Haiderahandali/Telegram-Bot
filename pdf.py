@@ -14,8 +14,8 @@ bot.
 """
 
 import bot_tok
-BOT_TOKEN = '1197980696:AAFJBi2p-WZnntICbJ8c_4hb6A1WVlyiO5Y'
-#BOT_TOKEN = Tok.token
+
+BOT_TOKEN = bot_tok.tokn
 cmd_convert = 'convert_word_to_pdf.sh '
 cmd_delete = 'rm '
 
