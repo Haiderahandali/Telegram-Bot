@@ -14,7 +14,10 @@ bot.
 """
 
 BOT_TOKEN = '1197980696:AAFJBi2p-WZnntICbJ8c_4hb6A1WVlyiO5Y'
-cmd = 'convert_word_to_pdf.sh '
+cmd_convert = 'convert_word_to_pdf.sh '
+cmd_delete = 'rm '
+
+bot_dir = '/home/ali-a/bot-dir/'
 outdir= '/home/ali-a/pdfs/'
 
 import logging
@@ -43,22 +46,23 @@ def help(update, context):
 
 def proc(command,fName):
     subprocess.run(command + fName,shell=True)
-
-
 def error(update, context):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
 
 def downloader(update, context):
-    #filename = context.bot.get_file(update.message.document).download()
+   # filename = context.bot.get_file(update.message.document).download(custom_path=bot_dir)
     chat_id = update.message.chat_id
-    filename = update.message.document.get_file().download()
-    proc(cmd,filename)
+    filename = update.message.document.file_name
+    update.message.document.get_file().download(bot_dir+filename)
+    proc(cmd_convert,bot_dir+filename)
     filepath = str(outdir+filename.rsplit(".",1)[0]+'.pdf')
-    print(filename)
+#    print(filename)
     context.bot.send_document(chat_id=chat_id, document=open(filepath, 'rb'))
     update.message.reply_text('Done!')
+    proc(cmd_delete,filepath)
+    proc(cmd_delete,bot_dir+filename)
 def main():
     """Start the bot."""
     # Create the Updater and pass it your bot's token.
