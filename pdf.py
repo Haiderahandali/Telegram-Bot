@@ -19,8 +19,8 @@ BOT_TOKEN = '1197980696:AAFJBi2p-WZnntICbJ8c_4hb6A1WVlyiO5Y'
 cmd_convert = 'convert_word_to_pdf.sh '
 cmd_delete = 'rm '
 
-bot_dir = '/home/ali-a/bot-dir/'
-outdir= '/home/ali-a/pdfs/'
+bot_dir = '/home/alia/bot-dir/'
+outdir= '/home/alia/pdfs/'
 
 import logging
 import subprocess
@@ -54,7 +54,6 @@ def error(update, context):
 
 
 def downloader(update, context):
-   # filename = context.bot.get_file(update.message.document).download(custom_path=bot_dir)
     chat_id = update.message.chat_id
     filename = update.message.document.file_name
     update.message.document.get_file().download(bot_dir+filename)
