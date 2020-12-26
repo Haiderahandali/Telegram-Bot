@@ -55,23 +55,25 @@ def error(update, context):
 
 def downloader_photo(update, context):
     chat_id = update.message.chat_id
-    filename = update.message.photo.file_name
+    filename =  update.message.photo[1].get_file().download()
+
+    filepath = filename.rsplit(".",1)[0]+".pdf"
+
+    proc(cmd_convert,r'''"'''+filename+r'''"''')
+
     filepath = outdir+filename.rsplit(".",1)[0]+".pdf"
 
-#    print("I am downloading ------------------------\n\n ")
-    update.message.photo.get_file().download(bot_dir+filename)
- #   print("\n this is the bot name and dir name  ", bot_dir+filename)
-    proc(cmd_convert,r'''"'''+bot_dir+filename+r'''"''')
-    filepath = outdir+filename.rsplit(".",1)[0]+".pdf"
-#    print(filename)
     context.bot.send_document(chat_id=chat_id, document=open(filepath, 'rb'))
     update.message.reply_text('Done!')
     proc(cmd_delete,r'''"'''+filepath+r'''"''')
-    proc(cmd_delete,r'''"'''+bot_dir+filename+r'''"''')
-
+    print("Deleted the PDF FILE")
+    proc(cmd_delete,r'''"'''+filename+r'''"''')
+    print("DELETED THE ORIGINAL FILE")
 
 def downloader_document(update, context):
     chat_id = update.message.chat_id
+    print(dir(update.message))
+#    print("DIR of update = \n",dir(update))
     filename = update.message.document.file_name
     filepath = outdir+filename.rsplit(".",1)[0]+".pdf"
     ext = filename.rsplit(".",1)[1]
