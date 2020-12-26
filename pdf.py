@@ -16,11 +16,11 @@ bot.
 import bot_tok
 
 BOT_TOKEN = bot_tok.tokn
-cmd_convert = 'convert_word_to_pdf.sh '
-cmd_delete = 'rm '
+cmd_convert = "convert_word_to_pdf.sh "
+cmd_delete = "rm "
 
-bot_dir = '/home/alia/bot-dir/'
-outdir= '/home/alia/pdfs/'
+bot_dir = "/home/alia/bot-dir/"
+outdir= "/home/alia/pdfs/"
 
 import logging
 import subprocess
@@ -38,12 +38,12 @@ logger = logging.getLogger(__name__)
 # context. Error handlers also receive the raised TelegramError object in error.
 def start(update, context):
     """Send a message when the command /start is issued."""
-    update.message.reply_text('Hi!')
+    update.message.reply_text('Hi, please send me a file to convert it to pdf!')
 
 
 def help(update, context):
     """Send a message when the command /help is issued."""
-    update.message.reply_text('Help!')
+    update.message.reply_text('The Bot Only convert Single files, pptx, docx, txt, HTML, Images such as PNG, JPEG and so on.')
 
 
 def proc(command,fName):
@@ -53,17 +53,41 @@ def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
 
-def downloader(update, context):
+def downloader_photo(update, context):
     chat_id = update.message.chat_id
-    filename = update.message.document.file_name
-    update.message.document.get_file().download(bot_dir+filename)
-    proc(cmd_convert,bot_dir+filename)
-    filepath = str(outdir+filename.rsplit(".",1)[0]+'.pdf')
+    filename = update.message.photo.file_name
+    filepath = outdir+filename.rsplit(".",1)[0]+".pdf"
+
+#    print("I am downloading ------------------------\n\n ")
+    update.message.photo.get_file().download(bot_dir+filename)
+ #   print("\n this is the bot name and dir name  ", bot_dir+filename)
+    proc(cmd_convert,r'''"'''+bot_dir+filename+r'''"''')
+    filepath = outdir+filename.rsplit(".",1)[0]+".pdf"
 #    print(filename)
     context.bot.send_document(chat_id=chat_id, document=open(filepath, 'rb'))
     update.message.reply_text('Done!')
-    proc(cmd_delete,filepath)
-    proc(cmd_delete,bot_dir+filename)
+    proc(cmd_delete,r'''"'''+filepath+r'''"''')
+    proc(cmd_delete,r'''"'''+bot_dir+filename+r'''"''')
+
+
+def downloader_document(update, context):
+    chat_id = update.message.chat_id
+    filename = update.message.document.file_name
+    filepath = outdir+filename.rsplit(".",1)[0]+".pdf"
+    ext = filename.rsplit(".",1)[1]
+    if ext == "pdf":
+        update.message.reply_text("The file is already pdf ")
+        return
+
+    update.message.document.get_file().download(bot_dir+filename)
+
+    proc(cmd_convert,r'''"'''+bot_dir+filename+r'''"''')
+    filepath = outdir+filename.rsplit(".",1)[0]+".pdf"
+
+    context.bot.send_document(chat_id=chat_id, document=open(filepath, 'rb'))
+    update.message.reply_text('Done!')
+    proc(cmd_delete,r'''"'''+filepath+r'''"''')
+    proc(cmd_delete,r'''"'''+bot_dir+filename+r'''"''')
 def main():
     """Start the bot."""
     # Create the Updater and pass it your bot's token.
@@ -81,7 +105,10 @@ def main():
     # on noncommand i.e message - echo the message on Telegram
     ### dp.add_handler(MessageHandler(Filters.text, echo))
     # on recieve a file, download it.
-    dp.add_handler(MessageHandler(Filters.document, downloader))
+
+    dp.add_handler(MessageHandler(Filters.document, downloader_document))
+
+    dp.add_handler(MessageHandler(Filters.photo, downloader_photo))
 
     # log all errors
     dp.add_error_handler(error)
