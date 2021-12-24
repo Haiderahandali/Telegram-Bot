@@ -13,6 +13,6 @@ PR are welcomed.
 
 ### **TODO**
 
-### 1 - Make the convert specific pages instead of all
-### 2 - convert multiple files into a single pdf
-### 3 - add more comamnds to make it more robust
+### 1 - Convert specific pages instead of all the pages.
+### 2 - Convert multiple files into a single pdf.
+### 3 - Add more comamnds so the user has more control (such as dimensions and aspect ratio).
